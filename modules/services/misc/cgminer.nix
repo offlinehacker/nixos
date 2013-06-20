@@ -128,7 +128,6 @@ in
       serviceConfig = {
         ExecStart = "${pkgs.cgminer}/bin/cgminer -T -c ${cgminerConfig}";
         User = cfg.user;
-        Restart = "on-failure";
         RestartSec = 10;
       };
     };
