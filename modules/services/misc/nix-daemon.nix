@@ -34,7 +34,8 @@ let
       pkgs.runCommand "nix.conf" {extraOptions = cfg.extraOptions; } ''
         extraPaths=$(for i in $(cat ${binshDeps}); do if test -d $i; then echo $i; fi; done)
         cat > $out <<END
-        # WARNING: this file is generated.
+        # WARNING: this file is generated from the nix.* entries in
+        # ${maybeEnv "NIXOS_CONFIG" "/etc/nixos/configuration.nix"}
         build-users-group = nixbld
         build-max-jobs = ${toString (cfg.maxJobs)}
         build-use-chroot = ${if cfg.useChroot then "true" else "false"}
@@ -69,7 +70,7 @@ in
         description = "
           This option defines the maximum number of jobs that Nix will try
           to build in parallel.  The default is 1.  You should generally
-          set it to the number of CPUs in your system (e.g., 2 on a Athlon
+          set it to the number of CPUs in your system (e.g., 2 on an Athlon
           64 X2).
         ";
       };
@@ -114,20 +115,20 @@ in
           <command>nixos-rebuild --no-build-hook</command>
           or consider managing <filename>/etc/nix.machines</filename> manually
           by setting <option>manualNixMachines</option>. Then you can comment
-          unavailable buildmachines.
+          unavailable build machines.
         ";
       };
 
       manualNixMachines = mkOption {
         default = false;
         description = "
-          Whether to manually manage the list of buildmachines used in distributed
+          Whether to manually manage the list of build machines used in distributed
           builds in /etc/nix.machines.
         ";
       };
 
       daemonNiceLevel = mkOption {
-        default = 10;
+        default = 0;
         description = "
           Nix daemon process priority. This priority propagates to build processes.
           0 is the default Unix process priority, 20 is the lowest.
@@ -135,7 +136,7 @@ in
       };
 
       daemonIONiceLevel = mkOption {
-        default = 7;
+        default = 0;
         description = "
           Nix daemon process I/O priority. This priority propagates to build processes.
           0 is the default Unix process I/O priority, 7 is the lowest.
@@ -163,7 +164,7 @@ in
           This option lists the machines to be used if distributed
           builds are enabled (see
           <option>nix.distributedBuilds</option>).  Nix will perform
-          derivations on those machines via SSh by copying the inputs
+          derivations on those machines via SSH by copying the inputs
           to the Nix store on the remote machine, starting the build,
           then copying the output back to the local Nix store.  Each
           element of the list should be an attribute set containing

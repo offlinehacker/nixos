@@ -77,7 +77,7 @@ in
   config = mkIf (xcfg.enable && cfg.enable) {
 
     # If KDE 4 is enabled, make it the default desktop manager (unless
-    # overriden by the user's configuration).
+    # overridden by the user's configuration).
     # !!! doesn't work yet ("Multiple definitions. Only one is allowed
     # for this option.")
     # services.xserver.desktopManager.default = mkOverrideTemplate 900 "kde4";
@@ -96,6 +96,11 @@ in
             # installing new applications to update the cache.
             # See http://lists-archives.org/kde-devel/26175-what-when-will-icon-cache-refresh.html
             rm -fv $HOME/.kde/cache-*/icon-cache.kcache
+
+            # Speed up application start by 50-150ms according to
+            # http://kdemonkey.blogspot.nl/2008/04/magic-trick.html
+            rm -fv $HOME/.compose-cache
+            mkdir $HOME/.compose-cache
 
             # Qt writes a weird ‘libraryPath’ line to
             # ~/.config/Trolltech.conf that causes the KDE plugin
